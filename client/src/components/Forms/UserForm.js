@@ -126,8 +126,6 @@ const UserForm = () => {
     formState: { errors },
   } = useForm();
 
-  console.log("aaaaaaaaaaaa", newUser);
-
   useEffect(() => {
     async function getCompanyById() {
       const response = await axios.get(`http://localhost:4000/api/user/${id}`);
@@ -137,7 +135,7 @@ const UserForm = () => {
     }
 
     console.log(history.location.pathname);
-    if (history.location.pathname === "/company/edit") {
+    if (history.location.pathname === "/profile/edit") {
       setNewUser(false);
       setUser(ref.current);
       // console.log(Object.entries(ref.current));
@@ -145,7 +143,7 @@ const UserForm = () => {
         console.log(`${key}: ${value}`);
         setValue(key, value);
       }
-    } else if (history.location.pathname !== "/company") {
+    } else if (history.location.pathname !== "/profile") {
       setNewUser(false);
       ref.current = getCompanyById();
     }

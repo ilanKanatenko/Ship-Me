@@ -64,6 +64,7 @@ const CompanySelect = () => {
   const history = useHistory();
   let companies;
   let user;
+  // the data that i am passing on from sign-in
   if (history.location.userData) {
     companies = history.location.userData.company;
     user = history.location.userData.user;

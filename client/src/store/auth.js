@@ -12,18 +12,17 @@ const authSlice = createSlice({
   initialState: initialAuthState,
   reducers: {
     login(state, action) {
-      console.log("wwwwwwwww", action.payload);
       state.user = { ...action.payload.user };
       state.company = { ...action.payload.company };
+      state.token = action.payload.token;
+      localStorage.setItem("token", action.payload.token);
 
       state.isAuthenticated = true;
     },
     updateUser(state, action) {
-      console.log("update user", action.payload);
       state.user = { ...action.payload };
     },
     updateCompany(state, action) {
-      console.log("update company", action.payload);
       state.company = { ...action.payload };
     },
     logout(state) {

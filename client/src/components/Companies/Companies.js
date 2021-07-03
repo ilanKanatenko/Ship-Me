@@ -180,7 +180,7 @@ const Companies = () => {
     // setShowDropDown("");
     console.log("3");
 
-    if (event.target.getAttribute("actionClick")) {
+    if (event.target.getAttribute("actionclick")) {
       return;
     }
     // if (event.target.getAttribute("value") === showDropDown) {
@@ -257,7 +257,7 @@ const Companies = () => {
           {companies &&
             companies.map((company) => (
               <Fragment key={company._id}>
-                <tr>
+                <tr key={company._id}>
                   <Td colSpan="9">
                     <Hr></Hr>
                   </Td>
@@ -294,7 +294,7 @@ const Companies = () => {
                         onMouseDown={(e) => {
                           e.preventDefault();
                         }}
-                        actionClick="true"
+                        actionclick="true"
                         value={company._id}
                         onClick={(e) => handleProfileClick(e)}
                       ></FaDots>

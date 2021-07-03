@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 require("./models/user");
 require("./models/company");
 
@@ -28,7 +29,35 @@ const db = mongoose.connection;
 const User = new mongoose.model("User");
 const Company = new mongoose.model("Company");
 
-app.get("/api/user", (req, res) => {
+// const token = jwt.sign(
+//   {
+//     data: "foobar",
+//   },
+//   "secret",
+//   { expiresIn: 120 }
+// );
+// console.log(token);
+
+// token =
+//   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZm9vYmFyIiwiaWF0IjoxNjI1MzE0Njc5LCJleHAiOjE2MjUzMTQ3OTl9.StzP6_ooMTjeVXXyHjUF9KQAaOyjZHNTmz2Kah34PiM";
+// const resJWT = jwt.verify(token, "secret");
+// console.log(resJWT);
+
+const verifyJWT = (req, res, next) => {
+  const token = req.body.token;
+  if (token) {
+    jwt.verify(token, "secret", (err, decode) => {
+      if (err) {
+        //send massage token expired
+      } else {
+        next();
+      }
+    });
+  }
+};
+
+//sign in
+app.get("/api/user", verifyJWT, (req, res) => {
   //   console.log(req);
   //   User.findOne({ _id: req.body._id });
   //   console.log(req.query);
@@ -53,7 +82,7 @@ app.get("/api/user", (req, res) => {
   );
 });
 
-app.get("/api/user/:id", async (req, res) => {
+app.get("/api/user/:id", verifyJWT, async (req, res) => {
   //   console.log(req);
   //   User.findOne({ _id: req.body._id });
   //   console.log(req.query);
@@ -65,7 +94,7 @@ app.get("/api/user/:id", async (req, res) => {
   res.send(user);
 });
 
-app.post("/api/user", async (req, res) => {
+app.post("/api/user", verifyJWT, async (req, res) => {
   console.log(req.body);
   console.log("aaa");
   let user = undefined;
@@ -79,7 +108,7 @@ app.post("/api/user", async (req, res) => {
   res.send({ ...user });
 });
 
-app.put("/api/user", async (req, res) => {
+app.put("/api/user", verifyJWT, async (req, res) => {
   console.log(req.body);
   console.log("aaa");
   if (req.body["password"] === req.body["confirmPassword"]) {
@@ -91,27 +120,27 @@ app.put("/api/user", async (req, res) => {
   res.send(200);
 });
 
-app.delete("/api/user", async (req, res) => {
+app.delete("/api/user", verifyJWT, async (req, res) => {
   console.log(req.body);
   User.findByIdAndDelete(req.body.id);
   res.sendStatus(200);
 });
 
-app.get("/api/users", async (req, res) => {
+app.get("/api/users", verifyJWT, async (req, res) => {
   console.log("/api/users get");
   const users = await User.find({});
   console.log(users);
   res.send({ ...users });
 });
 
-app.get("/api/company", (req, res) => {
+app.get("/api/company", verifyJWT, (req, res) => {
   //   console.log(req);
   console.log("aaa");
   //   Company.findOne({ _id: req.body._id });
   res.send("hello");
 });
 
-app.get("/api/company/:id", async (req, res) => {
+app.get("/api/company/:id", verifyJWT, async (req, res) => {
   //   console.log(req);
   //   User.findOne({ _id: req.body._id });
   //   console.log(req.query);
@@ -123,7 +152,7 @@ app.get("/api/company/:id", async (req, res) => {
   res.send(company);
 });
 
-app.put("/api/company", async (req, res) => {
+app.put("/api/company", verifyJWT, async (req, res) => {
   console.log(req.body);
   console.log("/api/company put");
   let company = undefined;
@@ -132,7 +161,7 @@ app.put("/api/company", async (req, res) => {
   res.send("company updated");
 });
 
-app.post("/api/company", (req, res) => {
+app.post("/api/company", verifyJWT, (req, res) => {
   console.log(req.body);
   console.log("/api/company post");
   let company = undefined;
@@ -144,13 +173,13 @@ app.post("/api/company", (req, res) => {
   res.send("new company added");
 });
 
-app.delete("/api/company", async (req, res) => {
+app.delete("/api/company", verifyJWT, async (req, res) => {
   console.log(req.body);
   const result = await Company.findByIdAndDelete(req.body.id);
   res.sendStatus(200);
 });
 
-app.get("/api/companies", async (req, res) => {
+app.get("/api/companies", verifyJWT, async (req, res) => {
   console.log("/api/companies get");
   const companies = await Company.find({});
   console.log(companies);

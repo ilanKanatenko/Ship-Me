@@ -9,6 +9,7 @@ import { NavLink } from "react-router-dom";
 import { FaEllipsisH } from "react-icons/fa";
 import { useEffect } from "react";
 import { useState } from "react";
+import { sendReq } from "../shared/SendRequest";
 
 const InputSubmit = styled.input`
   display: inline-block;
@@ -157,7 +158,7 @@ const Account = () => {
   const [users, setUsers] = useState([{}]);
   useEffect(() => {
     async function getAllCompanies() {
-      const response = await axios.get("http://localhost:4000/api/users");
+      const response = sendReq("http://localhost:4000/api/users", "get");
       setUsers(Object.values(response.data));
     }
     getAllCompanies();
