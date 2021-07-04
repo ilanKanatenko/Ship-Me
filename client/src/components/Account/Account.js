@@ -212,6 +212,10 @@ const Account = () => {
       `http://localhost:4000/api/user/${id}`,
       "delete"
     );
+    const updatedUsers = users.filter((user) => user._id !== id);
+    console.log("aaaaaaaaaaaaaaaaa", updatedUsers);
+    console.log(users, "bbbbbbbbbbbbbbbbbb");
+    setUsers([...updatedUsers]);
 
     setShowDropDown("");
   }

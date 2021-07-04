@@ -49,27 +49,20 @@ const Company = new mongoose.model("Company");
 // const resJWT = jwt.verify(token, "secret");
 
 const verifyJWT = (req, res, next) => {
-  console.log("verifyJWT start");
-  console.log(`${req.headers["x-access-token-token"]}`);
-  let token;
-  if (req.body.token) {
-    token = req.body.token;
-  } else if (req.params.token) {
-    token = req.params.token;
-  } else {
-    token = req.query.token;
+  console.log(req);
+
+  console.log(req.headers["x-access-token"]);
+  // console.log(req.body.headers["x-access-token"]);
+  let token = req.headers["x-access-token"];
+  if (!req.headers["x-access-token"]) {
+    console.log(req.body.headers["x-access-token"]);
+    token = req.body.headers["x-access-token"];
   }
-  console.log("verifyJWT aaaaaaaaaaaa", req.body);
-  console.log("verifyJWT bbbbbbbbbbbb", req.params);
-  console.log("verifyJWT cccccccccccc", req.query);
-  console.log("verifyJWT zzzzzzzzzzzz", token);
-  if (!token) {
-    token = "random";
-  }
-  jwt.verify(req.query.token, "secret", (err, decode) => {
+
+  // console.log(req.query.token);
+  jwt.verify(token, "secret", (err, decode) => {
     if (err) {
       console.log(req.headers["x-access-token-token"]);
-      console.log("ooooooooooooooooooooooooo");
       console.log(err);
       req.errorFromJwt = err;
     } else {
@@ -121,10 +114,10 @@ app.get("/api/user/:id", verifyJWT, async (req, res) => {
 // sign up
 app.post("/api/user", async (req, res) => {
   let user = undefined;
-  console.log(req.body);
-  if (req.body["password"] === req.body["confirmPassword"]) {
-    delete req.body["confirmPassword"];
-    user = new User({ ...req.body });
+  console.log(req.body.params);
+  if (req.body.params["password"] === req.body.params["confirmPassword"]) {
+    delete req.body.params["confirmPassword"];
+    user = new User({ ...req.body.params });
     user.save();
   }
   // const token = jwt.sign(
@@ -144,10 +137,10 @@ app.post("/api/user", async (req, res) => {
 app.post("/api/new/user", verifyJWT, async (req, res) => {
   if (!req.errorFromJwt) {
     let user = undefined;
-    console.log(req.body);
-    if (req.body["password"] === req.body["confirmPassword"]) {
-      delete req.body["confirmPassword"];
-      user = new User({ ...req.body });
+    console.log(req.body.params);
+    if (req.body.params["password"] === req.body.params["confirmPassword"]) {
+      delete req.body.params["confirmPassword"];
+      user = new User({ ...req.body.params });
       user.save();
     }
     res.send({ ...user, token: token });
@@ -158,11 +151,14 @@ app.post("/api/new/user", verifyJWT, async (req, res) => {
 
 app.put("/api/user", verifyJWT, async (req, res) => {
   if (!req.errorFromJwt) {
-    if (req.body["password"] === req.body["confirmPassword"]) {
-      delete req.body["confirmPassword"];
-      delete req.body["oldPassword"];
+    if (req.body.params["password"] === req.body.params["confirmPassword"]) {
+      delete req.body.params["confirmPassword"];
+      delete req.body.params["oldPassword"];
     }
-    const result = await User.findByIdAndUpdate(req.body._id, req.body);
+    const result = await User.findByIdAndUpdate(
+      req.body.params._id,
+      req.body.params
+    );
     //find one and update
     res.send(200);
   } else {
@@ -173,7 +169,6 @@ app.put("/api/user", verifyJWT, async (req, res) => {
 app.delete("/api/user/:id", verifyJWT, async (req, res) => {
   if (!req.errorFromJwt) {
     console.log("/api/user/:id delete selected user");
-    console.log(req.params.id, req.query.id, req.body.id);
     result = await User.findByIdAndDelete(req.params.id);
     console.log(result);
     res.sendStatus(200);
@@ -211,7 +206,10 @@ app.get("/api/company/:id", verifyJWT, async (req, res) => {
 app.put("/api/company", verifyJWT, async (req, res) => {
   if (!req.errorFromJwt) {
     let company = undefined;
-    const result = await Company.findByIdAndUpdate(req.body._id, req.body);
+    const result = await Company.findByIdAndUpdate(
+      req.body.params._id,
+      req.body.params
+    );
 
     res.send("company updated");
   } else {
@@ -223,7 +221,7 @@ app.post("/api/company", verifyJWT, (req, res) => {
   if (!req.errorFromJwt) {
     let company = undefined;
     company = new Company({
-      ...req.body,
+      ...req.body.params,
     });
     company.save();
     //   const data = { user: user, company: company };
