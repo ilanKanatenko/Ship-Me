@@ -9,7 +9,7 @@ import { NavLink } from "react-router-dom";
 import { FaEllipsisH } from "react-icons/fa";
 import { useEffect } from "react";
 import { useState } from "react";
-import { sendReq } from "../shared/SendRequest";
+import { SendRequest } from "../shared/SendRequest";
 
 const InputSubmit = styled.input`
   display: inline-block;
@@ -158,7 +158,10 @@ const Account = () => {
   const [users, setUsers] = useState([{}]);
   useEffect(() => {
     async function getAllCompanies() {
-      const response = await sendReq("http://localhost:4000/api/users", "get");
+      const response = await SendRequest(
+        "http://localhost:4000/api/users",
+        "get"
+      );
       setUsers(Object.values(response.data));
     }
     getAllCompanies();
@@ -205,7 +208,7 @@ const Account = () => {
   async function handleDeleteUser(event) {
     event.stopPropagation();
     const id = event.target.getAttribute("value");
-    const response = await sendReq(
+    const response = await SendRequest(
       `http://localhost:4000/api/user/${id}`,
       "delete"
     );

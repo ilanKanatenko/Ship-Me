@@ -6,7 +6,9 @@ import { NavLink } from "react-router-dom";
 import { useCallback, Fragment } from "react";
 import { useEffect } from "react";
 import axios from "axios";
-import { sendReq } from "../shared/SendRequest";
+import { SendRequest } from "../shared/SendRequest";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store/auth";
 
 // const PError = styled.p`
 //   margin: 0px;
@@ -141,12 +143,19 @@ const DropDownLink = styled(NavLink)`
 const Companies = () => {
   const [showDropDown, setShowDropDown] = useState("");
   const [companies, setCompanies] = useState([{}]);
+  const dispatch = useDispatch();
   useEffect(() => {
     async function getAllCompanies() {
-      const response = await sendReq(
+      const response = await SendRequest(
         "http://localhost:4000/api/companies",
-        "get"
+        "get",
+        dispatch(authActions.logout())
       );
+
+      console.log("Companies response", response);
+      // if (response.status === 401) {
+      //   dispatch(authActions.logout());
+      // }
       setCompanies(Object.values(response.data));
     }
     getAllCompanies();
@@ -201,7 +210,7 @@ const Companies = () => {
     event.stopPropagation();
     const id = event.target.getAttribute("value");
     console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    const response = await sendReq(
+    const response = await SendRequest(
       `http://localhost:4000/api/company/${id}`,
       "delete"
     );

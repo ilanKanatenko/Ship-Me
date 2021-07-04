@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { authActions } from "../../store/auth";
-import { sendReq } from "../shared/SendRequest";
+import { SendRequest } from "../shared/SendRequest";
 
 const PError = styled.p`
   margin: 0px;
@@ -60,7 +60,7 @@ const SignIn = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
-    const response = await sendReq(
+    const response = await SendRequest(
       "http://localhost:4000/api/user",
       "get",
       data

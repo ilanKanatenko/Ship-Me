@@ -9,7 +9,7 @@ import { useHistory, NavLink, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
-import { sendReq } from "../shared/SendRequest";
+import { SendRequest } from "../shared/SendRequest";
 
 const PError = styled.p`
   margin: 0px;
@@ -135,7 +135,7 @@ const CompanyForm = (props) => {
     console.log(history);
 
     async function getCompanyById() {
-      const response = await sendReq(
+      const response = await SendRequest(
         `http://localhost:4000/api/company/${id}`,
         "get"
       );
@@ -180,13 +180,13 @@ const CompanyForm = (props) => {
     //## uncheck for data fetching
     if (newCompany) {
       // console.log("bbbbbbbbbbb", companyData, data);
-      const response = await sendReq(
+      const response = await SendRequest(
         "http://localhost:4000/api/company",
         "post",
         data
       );
     } else {
-      const response = await sendReq(
+      const response = await SendRequest(
         "http://localhost:4000/api/company",
         "put",
         {

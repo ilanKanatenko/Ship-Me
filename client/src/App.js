@@ -10,81 +10,125 @@ import Company from "./components/Forms/CompanyForm";
 
 import MainNavBar from "./components/shared/MainNavBar";
 import SecondaryNavBar from "./components/shared/SecondaryNavBar";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 function App() {
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  // const isAuthenticated = true;
+
+  // useEffect(() => {
+  //   effect;
+  //   return () => {
+  //     cleanup;
+  //   };
+  // }, [input]);
+
   return (
     <div className="App">
       <Router>
-        <Switch>
-          {/* <Route path="/about">
+        {isAuthenticated ? (
+          <>
+            <Switch>
+              {/* <Route path="/about">
             <About />
           </Route> */}
-          <Route exact path="/sign-in">
-            <header className="App-header">
-              <Landing formType="sign-in"></Landing>
-            </header>
-          </Route>
-          <Route exact path="/sign-up">
-            <header className="App-header">
-              <Landing formType="sign-up"></Landing>
-            </header>
-          </Route>
-          <Route exact path="/select-company">
-            <header className="App-header">
-              <Landing formType="/select-company"></Landing>
-            </header>
-          </Route>
-        </Switch>
+              <Route exact path="/sign-in">
+                <header className="App-header">
+                  <Landing formType="sign-in"></Landing>
+                </header>
+              </Route>
+              <Route exact path="/sign-up">
+                <header className="App-header">
+                  <Landing formType="sign-up"></Landing>
+                </header>
+              </Route>
+              <Route exact path="/select-company">
+                <header className="App-header">
+                  <Landing formType="/select-company"></Landing>
+                </header>
+              </Route>
+            </Switch>
 
-        <Switch>
-          <Route exact path="/account">
-            <MainNavBar />
-            <SecondaryNavBar />
-            <Account />
-          </Route>
-          <Route key="add-client" exact path="/profile">
-            <Profile />
-          </Route>
-          <Route key="edit-client" exact path="/profile/edit">
-            <MainNavBar />
-            <SecondaryNavBar />
-            <Profile />
-          </Route>
-          <Route key="edit-chosen-user" exact path="/profile/edit/:id">
-            <MainNavBar />
-            <SecondaryNavBar />
-            <Profile />
-          </Route>
-          <Route key="add-company" exact path="/company">
-            <Company />
-          </Route>
-          <Route key="edit-company" exact path="/company/edit">
-            <MainNavBar />
-            <SecondaryNavBar />
-            <Company />
-          </Route>
-          <Route key="edit-chosen-company" exact path="/company/edit/:id">
-            <MainNavBar />
-            <SecondaryNavBar />
-            <Company />
-          </Route>
-          <Route exact path="/companies">
-            <MainNavBar />
-            <SecondaryNavBar />
-            <Companies />
-          </Route>
+            <Switch>
+              <Route exact path="/account">
+                <MainNavBar />
+                <SecondaryNavBar />
+                <Account />
+              </Route>
+              <Route key="add-client" exact path="/profile">
+                <Profile />
+              </Route>
+              <Route key="edit-client" exact path="/profile/edit">
+                <MainNavBar />
+                <SecondaryNavBar />
+                <Profile />
+              </Route>
+              <Route key="edit-chosen-user" exact path="/profile/edit/:id">
+                <MainNavBar />
+                <SecondaryNavBar />
+                <Profile />
+              </Route>
+              <Route key="add-company" exact path="/company">
+                <Company />
+              </Route>
+              <Route key="edit-company" exact path="/company/edit">
+                <MainNavBar />
+                <SecondaryNavBar />
+                <Company />
+              </Route>
+              <Route key="edit-chosen-company" exact path="/company/edit/:id">
+                <MainNavBar />
+                <SecondaryNavBar />
+                <Company />
+              </Route>
+              <Route exact path="/companies">
+                <MainNavBar />
+                <SecondaryNavBar />
+                <Companies />
+              </Route>
 
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route exact path="/shipments">
-            <MainNavBar />
-            <Home />
-          </Route>
-          <Route exact path="/order">
-            <MainNavBar />
-          </Route>
-        </Switch>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route exact path="/shipments">
+                <MainNavBar />
+                <Home />
+              </Route>
+              <Route exact path="/order">
+                <MainNavBar />
+              </Route>
+            </Switch>
+          </>
+        ) : (
+          <>
+            <Switch>
+              {/* <Route path="/about">
+            <About />
+          </Route> */}
+              <Route exact path="/sign-in">
+                <header className="App-header">
+                  <Landing formType="sign-in"></Landing>
+                </header>
+              </Route>
+              <Route exact path="/sign-up">
+                <header className="App-header">
+                  <Landing formType="sign-up"></Landing>
+                </header>
+              </Route>
+              <Route exact path="/select-company">
+                <header className="App-header">
+                  <Landing formType="/select-company"></Landing>
+                </header>
+              </Route>
+              <Route path="/">
+                <header className="App-header">
+                  <Landing formType="sign-in"></Landing>
+                </header>
+              </Route>
+            </Switch>
+          </>
+        )}
       </Router>
 
       {/* <img src={logo} className="App-logo" alt="logo" />

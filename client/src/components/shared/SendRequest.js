@@ -1,28 +1,60 @@
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../store/auth";
 
-export const sendReq = async (url, method, data = null) => {
-  console.log(url, method, data);
-  const token = localStorage.getItem("token");
-  if (data) {
-    data.token = token;
+export const SendRequest = async (
+  url,
+  method,
+  data = {},
+  dispatchAction = () => {
+    return;
   }
+) => {
+  const token = localStorage.getItem("token");
+  // if (data) {
+  data.token = token;
+  console.log(url, method, data);
+  // }
+  let response;
   switch (method) {
     case "get":
-      if (data) {
-        console.log(axios.get(url, { params: { ...data } }));
-        return axios.get(url, { params: { ...data } });
+      // if (data) {
+      //   response = await axios.get(url, { params: { ...data } });
+      //   console.log("a SendRequest  get", response);
+      //   if (response.status === 401) {
+      //     return;
+      //   }
+      //   return response;
+      // }
+      response = await axios.get(url, { params: { ...data } });
+      dispatchAction();
+      console.log("b SendRequest  get", response);
+      if (response.status === 401) {
+        return;
       }
-      return axios.get(url);
+      return response;
 
     case "post":
       console.log("send request post ");
-      return axios.post(url, { ...data });
+      response = await axios.post(url, { ...data });
+      if (response.status === 401) {
+        return;
+      }
+      return response;
 
     case "put":
-      return axios.put(url, { ...data });
+      response = await axios.put(url, { ...data });
+      if (response.status === 401) {
+        return;
+      }
+      return response;
 
     case "delete":
-      return axios.delete(url, { data: { token: token } });
+      response = await axios.delete(url, { data: { ...data } });
+      if (response.status === 401) {
+        return;
+      }
+      return response;
 
     default:
       break;

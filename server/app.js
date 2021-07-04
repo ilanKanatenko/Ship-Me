@@ -41,29 +41,24 @@ const Company = new mongoose.model("Company");
 //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiZm9vYmFyIiwiaWF0IjoxNjI1MzE0Njc5LCJleHAiOjE2MjUzMTQ3OTl9.StzP6_ooMTjeVXXyHjUF9KQAaOyjZHNTmz2Kah34PiM";
 // const resJWT = jwt.verify(token, "secret");
 
-let errorFromJwt = null;
-
 const verifyJWT = (req, res, next) => {
   const token = req.body.token;
   console.log("verifyJWT aaaaaaaaaaaa", req.body);
-  console.log("verifyJWT bbbbbbbbbbbb", req.params.token);
+  console.log("verifyJWT bbbbbbbbbbbb", req.params);
   console.log("verifyJWT cccccccccccc", req.query);
-  // if (token) {
   jwt.verify(req.query.token, "secret", (err, decode) => {
     if (err) {
-      errorFromJwt = err;
-      console.log("jwt.verify error", err, decode);
+      req.errorFromJwt = err;
     } else {
-      console.log("jwt.verify no error", err, decode);
+      req.errorFromJwt = null;
     }
   });
-  // } else {
+
   next();
-  // }
 };
 
 //sign in
-app.get("/api/user", verifyJWT, (req, res) => {
+app.get("/api/user", (req, res) => {
   //   User.findOne({ _id: req.body._id });
   let user = {};
   user = User.findOne(
@@ -89,7 +84,7 @@ app.get("/api/user/:id", verifyJWT, async (req, res) => {
   //   User.findOne({ _id: req.body._id });
   let user = {};
   //   user = await User.findOne({ _id: req.params.id });
-  if (!errorFromJwt) {
+  if (!req.errorFromJwt) {
     user = await User.findById(req.params.id);
     res.send(user);
   } else {
@@ -98,7 +93,7 @@ app.get("/api/user/:id", verifyJWT, async (req, res) => {
 });
 
 // sign up
-app.post("/api/user", verifyJWT, async (req, res) => {
+app.post("/api/user", async (req, res) => {
   let user = undefined;
   console.log(req.body);
   if (req.body["password"] === req.body["confirmPassword"]) {
@@ -119,8 +114,24 @@ app.post("/api/user", verifyJWT, async (req, res) => {
   res.send({ ...user, token: token });
 });
 
+//new user
+app.post("/api/new/user", verifyJWT, async (req, res) => {
+  if (!req.errorFromJwt) {
+    let user = undefined;
+    console.log(req.body);
+    if (req.body["password"] === req.body["confirmPassword"]) {
+      delete req.body["confirmPassword"];
+      user = new User({ ...req.body });
+      user.save();
+    }
+    res.send({ ...user, token: token });
+  } else {
+    res.status(401);
+  }
+});
+
 app.put("/api/user", verifyJWT, async (req, res) => {
-  if (!errorFromJwt) {
+  if (!req.errorFromJwt) {
     if (req.body["password"] === req.body["confirmPassword"]) {
       delete req.body["confirmPassword"];
       delete req.body["oldPassword"];
@@ -134,53 +145,81 @@ app.put("/api/user", verifyJWT, async (req, res) => {
 });
 
 app.delete("/api/user/:id", verifyJWT, async (req, res) => {
-  User.findByIdAndDelete(req.params.id);
-  res.sendStatus(200);
+  if (!req.errorFromJwt) {
+    User.findByIdAndDelete(req.params.id);
+    res.sendStatus(200);
+  } else {
+    res.status(401);
+  }
 });
 
 app.get("/api/users", verifyJWT, async (req, res) => {
-  const users = await User.find({});
-  res.send({ ...users });
+  if (!req.errorFromJwt) {
+    const users = await User.find({});
+    res.send({ ...users });
+  } else {
+    res.status(401);
+  }
 });
 
-app.get("/api/company", verifyJWT, (req, res) => {
-  //   Company.findOne({ _id: req.body._id });
-  res.send("hello");
-});
+// app.get("/api/company", verifyJWT, (req, res) => {
+//   //   Company.findOne({ _id: req.body._id });
+//   res.send("hello");
+// });
 
 app.get("/api/company/:id", verifyJWT, async (req, res) => {
   //   User.findOne({ _id: req.body._id });
-  let company = {};
-  //   user = await User.findOne({ _id: req.params.id });
-  company = await Company.findOne({ _id: req.params.id });
-  res.send(company);
+  if (!req.errorFromJwt) {
+    let company = {};
+    //   user = await User.findOne({ _id: req.params.id });
+    company = await Company.findOne({ _id: req.params.id });
+    res.send(company);
+  } else {
+    res.status(401);
+  }
 });
 
 app.put("/api/company", verifyJWT, async (req, res) => {
-  let company = undefined;
-  const result = await Company.findByIdAndUpdate(req.body._id, req.body);
+  if (!req.errorFromJwt) {
+    let company = undefined;
+    const result = await Company.findByIdAndUpdate(req.body._id, req.body);
 
-  res.send("company updated");
+    res.send("company updated");
+  } else {
+    res.status(401);
+  }
 });
 
 app.post("/api/company", verifyJWT, (req, res) => {
-  let company = undefined;
-  company = new Company({
-    ...req.body,
-  });
-  company.save();
-  //   const data = { user: user, company: company };
-  res.send("new company added");
+  if (!req.errorFromJwt) {
+    let company = undefined;
+    company = new Company({
+      ...req.body,
+    });
+    company.save();
+    //   const data = { user: user, company: company };
+    res.send("new company added");
+  } else {
+    res.status(401);
+  }
 });
 
 app.delete("/api/company/:id", verifyJWT, async (req, res) => {
-  const result = await Company.findByIdAndDelete(req.params.id);
-  res.sendStatus(200);
+  if (!req.errorFromJwt) {
+    const result = await Company.findByIdAndDelete(req.params.id);
+    res.sendStatus(200);
+  } else {
+    res.status(401);
+  }
 });
 
 app.get("/api/companies", verifyJWT, async (req, res) => {
-  const companies = await Company.find({});
-  res.send({ ...companies });
+  if (!req.errorFromJwt) {
+    const companies = await Company.find({});
+    res.send({ ...companies });
+  } else {
+    res.status(401);
+  }
 });
 
 app.listen(4000, () => {

@@ -9,7 +9,7 @@ import { authActions } from "../../store/auth";
 import { FaWindowClose } from "react-icons/fa";
 import axios from "axios";
 import { useRef } from "react";
-import { sendReq } from "../shared/SendRequest";
+import { SendRequest } from "../shared/SendRequest";
 
 const PError = styled.p`
   margin: 0px;
@@ -129,7 +129,7 @@ const UserForm = () => {
 
   useEffect(() => {
     async function getCompanyById() {
-      const response = await sendReq(
+      const response = await SendRequest(
         `http://localhost:4000/api/user/${id}`,
         "get"
       );
@@ -186,8 +186,8 @@ const UserForm = () => {
     if (newUser) {
       console.log("bbbbbbbbbbb", user, data);
       if (data.password === data.confirmPassword) {
-        const response = await sendReq(
-          "http://localhost:4000/api/user",
+        const response = await SendRequest(
+          "http://localhost:4000/api/new/user",
           "post",
           data
         );
@@ -201,7 +201,7 @@ const UserForm = () => {
         delete data.role;
         delete data.newPassword;
         delete data.confirmPassword;
-        const response = await sendReq(
+        const response = await SendRequest(
           "http://localhost:4000/api/user",
           "put",
           {

@@ -26,7 +26,10 @@ const authSlice = createSlice({
       state.company = { ...action.payload };
     },
     logout(state) {
-      state = initialAuthState;
+      state.user = {};
+      state.company = {};
+      state.token = "";
+      state.isAuthenticated = false;
     },
   },
 });
