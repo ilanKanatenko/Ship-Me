@@ -9,6 +9,13 @@ require("./models/company");
 
 const app = express();
 
+// app.use(
+//   cors({
+//     origin: ["http://localhost:3000"],
+//     methods: ["GET,POST,PUT,DELETE"],
+//     credentials: true,
+//   })
+// );
 app.use(cors());
 
 // // parse application/x-www-form-urlencoded
@@ -42,14 +49,31 @@ const Company = new mongoose.model("Company");
 // const resJWT = jwt.verify(token, "secret");
 
 const verifyJWT = (req, res, next) => {
-  const token = req.body.token;
+  console.log("verifyJWT start");
+  console.log(`${req.headers["x-access-token-token"]}`);
+  let token;
+  if (req.body.token) {
+    token = req.body.token;
+  } else if (req.params.token) {
+    token = req.params.token;
+  } else {
+    token = req.query.token;
+  }
   console.log("verifyJWT aaaaaaaaaaaa", req.body);
   console.log("verifyJWT bbbbbbbbbbbb", req.params);
   console.log("verifyJWT cccccccccccc", req.query);
+  console.log("verifyJWT zzzzzzzzzzzz", token);
+  if (!token) {
+    token = "random";
+  }
   jwt.verify(req.query.token, "secret", (err, decode) => {
     if (err) {
+      console.log(req.headers["x-access-token-token"]);
+      console.log("ooooooooooooooooooooooooo");
+      console.log(err);
       req.errorFromJwt = err;
     } else {
+      console.log("pppppppppppppppppppppppppppppp");
       req.errorFromJwt = null;
     }
   });
@@ -61,6 +85,8 @@ const verifyJWT = (req, res, next) => {
 app.get("/api/user", (req, res) => {
   //   User.findOne({ _id: req.body._id });
   let user = {};
+  console.log(req.headers["x-access-token"]);
+  console.log(req);
   user = User.findOne(
     {
       email: req.query.email,
@@ -88,7 +114,7 @@ app.get("/api/user/:id", verifyJWT, async (req, res) => {
     user = await User.findById(req.params.id);
     res.send(user);
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 
@@ -126,7 +152,7 @@ app.post("/api/new/user", verifyJWT, async (req, res) => {
     }
     res.send({ ...user, token: token });
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 
@@ -140,16 +166,19 @@ app.put("/api/user", verifyJWT, async (req, res) => {
     //find one and update
     res.send(200);
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 
 app.delete("/api/user/:id", verifyJWT, async (req, res) => {
   if (!req.errorFromJwt) {
-    User.findByIdAndDelete(req.params.id);
+    console.log("/api/user/:id delete selected user");
+    console.log(req.params.id, req.query.id, req.body.id);
+    result = await User.findByIdAndDelete(req.params.id);
+    console.log(result);
     res.sendStatus(200);
   } else {
-    res.status(401);
+    res.status(403).json({ error: "token expired", status: 401 });
   }
 });
 
@@ -158,7 +187,7 @@ app.get("/api/users", verifyJWT, async (req, res) => {
     const users = await User.find({});
     res.send({ ...users });
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 
@@ -175,7 +204,7 @@ app.get("/api/company/:id", verifyJWT, async (req, res) => {
     company = await Company.findOne({ _id: req.params.id });
     res.send(company);
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 
@@ -186,7 +215,7 @@ app.put("/api/company", verifyJWT, async (req, res) => {
 
     res.send("company updated");
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 
@@ -200,7 +229,7 @@ app.post("/api/company", verifyJWT, (req, res) => {
     //   const data = { user: user, company: company };
     res.send("new company added");
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 
@@ -209,7 +238,7 @@ app.delete("/api/company/:id", verifyJWT, async (req, res) => {
     const result = await Company.findByIdAndDelete(req.params.id);
     res.sendStatus(200);
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 
@@ -218,7 +247,7 @@ app.get("/api/companies", verifyJWT, async (req, res) => {
     const companies = await Company.find({});
     res.send({ ...companies });
   } else {
-    res.status(401);
+    res.status(401).json({ error: "token expired", status: 401 });
   }
 });
 

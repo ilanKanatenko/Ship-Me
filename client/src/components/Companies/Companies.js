@@ -148,14 +148,14 @@ const Companies = () => {
     async function getAllCompanies() {
       const response = await SendRequest(
         "http://localhost:4000/api/companies",
-        "get",
-        dispatch(authActions.logout())
+        "get"
       );
 
       console.log("Companies response", response);
       // if (response.status === 401) {
       //   dispatch(authActions.logout());
       // }
+      console.log("aaaaaaaaaaaaa", response);
       setCompanies(Object.values(response.data));
     }
     getAllCompanies();
