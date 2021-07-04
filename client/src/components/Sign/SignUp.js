@@ -84,7 +84,7 @@ const SignUp = () => {
         "post",
         data
       );
-      console.log(response);
+      console.log("whats the response aaaaaa", response);
       if (response.status === 200) {
         dispatch(authActions.login(response.data));
         history.push("/");

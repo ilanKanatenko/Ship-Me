@@ -202,9 +202,8 @@ const Companies = () => {
     const id = event.target.getAttribute("value");
     console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     const response = await sendReq(
-      "http://localhost:4000/api/company",
-      "delete",
-      id
+      `http://localhost:4000/api/company/${id}`,
+      "delete"
     );
 
     setShowDropDown("");

@@ -206,9 +206,8 @@ const Account = () => {
     event.stopPropagation();
     const id = event.target.getAttribute("value");
     const response = await sendReq(
-      "http://localhost:4000/api/user",
-      "delete",
-      id
+      `http://localhost:4000/api/user/${id}`,
+      "delete"
     );
 
     setShowDropDown("");
