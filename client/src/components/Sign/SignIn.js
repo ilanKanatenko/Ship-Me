@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { authActions } from "../../store/auth";
+import { sendReq } from "../shared/SendRequest";
 
 const PError = styled.p`
   margin: 0px;
@@ -59,10 +60,12 @@ const SignIn = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
-    console.log(data);
-    const response = await axios.get("http://localhost:4000/api/user", {
-      params: { ...data },
-    });
+    const response = await sendReq(
+      "http://localhost:4000/api/user",
+      "get",
+      data
+    );
+    console.log("aaaaaaaaaaaaaaaa", response);
     const { company } = response.data;
 
     if (response.status === 200) {

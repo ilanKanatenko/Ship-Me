@@ -158,7 +158,7 @@ const Account = () => {
   const [users, setUsers] = useState([{}]);
   useEffect(() => {
     async function getAllCompanies() {
-      const response = sendReq("http://localhost:4000/api/users", "get");
+      const response = await sendReq("http://localhost:4000/api/users", "get");
       setUsers(Object.values(response.data));
     }
     getAllCompanies();
@@ -205,9 +205,12 @@ const Account = () => {
   async function handleDeleteUser(event) {
     event.stopPropagation();
     const id = event.target.getAttribute("value");
-    const response = await axios.delete("http://localhost:4000/api/user", {
-      data: { id: id },
-    });
+    const response = await sendReq(
+      "http://localhost:4000/api/user",
+      "delete",
+      id
+    );
+
     setShowDropDown("");
   }
 

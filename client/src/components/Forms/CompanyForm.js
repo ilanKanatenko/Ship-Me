@@ -9,6 +9,7 @@ import { useHistory, NavLink, useParams } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
+import { sendReq } from "../shared/SendRequest";
 
 const PError = styled.p`
   margin: 0px;
@@ -134,9 +135,12 @@ const CompanyForm = (props) => {
     console.log(history);
 
     async function getCompanyById() {
-      const response = await axios.get(
-        `http://localhost:4000/api/company/${id}`
+      const response = await sendReq(
+        `http://localhost:4000/api/company/${id}`,
+        "get"
       );
+      console.log("yyyyyyyyyyyyyyyyyyy", response.data);
+
       setCompanyData({ ...response.data });
       console.log(response.data);
       return response.data;
@@ -176,14 +180,21 @@ const CompanyForm = (props) => {
     //## uncheck for data fetching
     if (newCompany) {
       // console.log("bbbbbbbbbbb", companyData, data);
-      const response = await axios.post("http://localhost:4000/api/company", {
-        ...data,
-      });
+      const response = await sendReq(
+        "http://localhost:4000/api/company",
+        "post",
+        data
+      );
     } else {
-      const response = await axios.put("http://localhost:4000/api/company", {
-        ...companyData,
-        ...data,
-      });
+      const response = await sendReq(
+        "http://localhost:4000/api/company",
+        "put",
+        {
+          ...companyData,
+          ...data,
+        }
+      );
+
       if (response.status === 200) {
         if (!id) {
           dispatch(authActions.updateCompany({ ...companyData, ...data }));

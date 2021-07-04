@@ -49,10 +49,10 @@ const verifyJWT = (req, res, next) => {
     jwt.verify(token, "secret", (err, decode) => {
       if (err) {
         //send massage token expired
-      } else {
-        next();
       }
     });
+  } else {
+    next();
   }
 };
 
@@ -62,6 +62,7 @@ app.get("/api/user", verifyJWT, (req, res) => {
   //   User.findOne({ _id: req.body._id });
   //   console.log(req.query);
   let user = {};
+  console.log("tttttttttttttttttttttttttttt");
   user = User.findOne(
     {
       email: req.query.email,

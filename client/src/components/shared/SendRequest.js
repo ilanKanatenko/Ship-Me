@@ -1,9 +1,11 @@
 import axios from "axios";
 
 export const sendReq = async (url, method, data = null) => {
+  console.log(url, method, data);
   switch (method) {
     case "get":
       if (data) {
+        console.log(axios.get(url, { params: { ...data } }));
         return axios.get(url, { params: { ...data } });
       }
       return axios.get(url);

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/auth";
+import { sendReq } from "../shared/SendRequest";
 
 const PError = styled.p`
   margin: 0px;
@@ -78,7 +79,11 @@ const SignUp = () => {
   const onSubmit = async (data) => {
     console.log(data);
     if (data["confirmPassword"] === data["password"]) {
-      const response = await axios.post("http://localhost:4000/api/user", data);
+      const response = await sendReq(
+        "http://localhost:4000/api/user",
+        "post",
+        data
+      );
       console.log(response);
       if (response.status === 200) {
         dispatch(authActions.login(response.data));

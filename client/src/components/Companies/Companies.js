@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 import { useCallback, Fragment } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import { sendReq } from "../shared/SendRequest";
 
 // const PError = styled.p`
 //   margin: 0px;
@@ -142,7 +143,10 @@ const Companies = () => {
   const [companies, setCompanies] = useState([{}]);
   useEffect(() => {
     async function getAllCompanies() {
-      const response = await axios.get("http://localhost:4000/api/companies");
+      const response = await sendReq(
+        "http://localhost:4000/api/companies",
+        "get"
+      );
       setCompanies(Object.values(response.data));
     }
     getAllCompanies();
@@ -197,9 +201,12 @@ const Companies = () => {
     event.stopPropagation();
     const id = event.target.getAttribute("value");
     console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    const response = await axios.delete("http://localhost:4000/api/company", {
-      data: { id: id },
-    });
+    const response = await sendReq(
+      "http://localhost:4000/api/company",
+      "delete",
+      id
+    );
+
     setShowDropDown("");
   }
 
