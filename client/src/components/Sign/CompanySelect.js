@@ -76,8 +76,6 @@ const CompanySelect = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
-    console.log(data);
-
     const result = companies.find((obj) => {
       return obj._id === selectedValue;
     });
@@ -88,8 +86,6 @@ const CompanySelect = () => {
     // const response = await axios.get("http://localhost:4000/api/user", {
     //   params: { ...data },
     // });
-    // console.log("aaaaaaaaaaaaaaaaa");
-    // console.log(response.status);
     // if (response.status === 200) {
     //   if (response.data.companies.length > 0) {
     //     history.push({
@@ -102,7 +98,6 @@ const CompanySelect = () => {
     //     history.push("/");
     //   }
     // } else {
-    //   console.log("email or password are incorrect ");
     // }
   };
 
@@ -112,7 +107,6 @@ const CompanySelect = () => {
         <Select
           value={selectedValue}
           onInput={(e) => {
-            // console.log(e.target.value);
             setSelectedValue(e.target.value);
           }}
           {...register("company", { required: true })}

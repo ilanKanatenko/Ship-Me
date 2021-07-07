@@ -9,7 +9,6 @@ const H2 = styled.h2`
 `;
 
 const LogoText = ({ src, text }) => {
-  console.log(src);
   return (
     <>
       <Img src={src} alt="logo"></Img>

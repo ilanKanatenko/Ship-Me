@@ -9,6 +9,8 @@ import axios from "axios";
 import { SendRequest } from "../shared/SendRequest";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../store/auth";
+import SearchInput from "../shared/SearchInput";
+import Toast from "../shared/Toast";
 
 // const PError = styled.p`
 //   margin: 0px;
@@ -48,7 +50,7 @@ const FormTable = styled.table`
   margin: auto;
   table-layout: auto;
   text-align: left;
-  min-height: 30vh;
+  /* min-height: 30vh; */
   width: 95%;
   /* max-width: 40%; */
 
@@ -142,7 +144,10 @@ const DropDownLink = styled(NavLink)`
 
 const Companies = () => {
   const [showDropDown, setShowDropDown] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [companies, setCompanies] = useState([{}]);
+  const [allCompanies, setAllCompanies] = useState([{}]);
+  const [showToast, setShowToast] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
     async function getAllCompanies() {
@@ -151,12 +156,11 @@ const Companies = () => {
         "get"
       );
 
-      console.log("Companies response", response);
       // if (response.status === 401) {
       //   dispatch(authActions.logout());
       // }
-      console.log("aaaaaaaaaaaaa", response);
       setCompanies(Object.values(response.data));
+      setAllCompanies(Object.values(response.data));
     }
     getAllCompanies();
   }, []);
@@ -167,13 +171,11 @@ const Companies = () => {
       setShowDropDown((prevValues) => {
         return event.target.getAttribute("");
       });
-      console.log("1");
       document.removeEventListener("click", memorizeClosing);
     } else {
       setShowDropDown((prevValues) => {
         return event.target.getAttribute("value");
       });
-      console.log("2");
       document.addEventListener("click", memorizeClosing);
     }
   };
@@ -188,35 +190,47 @@ const Companies = () => {
     // ) {
     //   return;
     // }
-    // console.log(showDropDown);
     // setShowDropDown(event.target.getAttribute("value"));
     // setShowDropDown("");
-    console.log("3");
 
     if (event.target.getAttribute("actionclick")) {
       return;
     }
     // if (event.target.getAttribute("value") === showDropDown) {
-    //   console.log("bbbbb");
     //   return;
     // }
-    console.log("4");
     setShowDropDown(event.target.getAttribute("value"));
     document.removeEventListener("click", memorizeClosing);
   };
-  console.log(companies);
 
   async function handleDeleteCompany(event) {
     event.stopPropagation();
     const id = event.target.getAttribute("value");
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     const response = await SendRequest(
       `http://localhost:4000/api/company/${id}`,
       "delete"
     );
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000);
+    const updatedCompanies = companies.filter((user) => user._id !== id);
+    setCompanies([...updatedCompanies]);
+    setAllCompanies([...updatedCompanies]);
 
     setShowDropDown("");
   }
+
+  const handleSearch = (e) => {
+    setSearchInput(e.target.value);
+
+    let filteredCompanies = allCompanies.filter((company) =>
+      company.name.toLowerCase().includes(e.target.value.toLowerCase())
+    );
+
+    setCompanies([...filteredCompanies]);
+    // setUsers()
+  };
 
   return (
     <DivTable>
@@ -225,7 +239,8 @@ const Companies = () => {
           {/* <NameDiv> */}
           <tr>
             <Td colSpan="2" TextAlign="center">
-              <h1 style={{ marginBottom: "0" }}>New Company</h1>
+              <SearchInput value={searchInput} onChange={handleSearch} />
+              {/* <h1 style={{ marginBottom: "0" }}>New Company</h1> */}
             </Td>
             <td colSpan="5"></td>
 
@@ -348,6 +363,8 @@ const Companies = () => {
           {/* </NameDiv> */}
         </tbody>
       </FormTable>
+
+      <Toast show={showToast} text="deleted successfully" />
     </DivTable>
   );
 };

@@ -10,6 +10,7 @@ import { FaWindowClose } from "react-icons/fa";
 import axios from "axios";
 import { useRef } from "react";
 import { SendRequest } from "../shared/SendRequest";
+import Toast from "../shared/Toast";
 
 const PError = styled.p`
   margin: 0px;
@@ -87,6 +88,7 @@ const SaveButton = styled(InputSubmit)`
   position: relative;
   left: 0%;
   width: 25%;
+  max-width: 300px;
   margin-bottom: 50px;
 `;
 
@@ -114,6 +116,7 @@ const UserForm = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const [newUser, setNewUser] = useState(true);
+  const [showToast, setShowToast] = useState(false);
   // let defValues = user;
   // if (newUser) {
   //   defValues = { };
@@ -134,17 +137,13 @@ const UserForm = () => {
         "get"
       );
       setUser({ ...response.data });
-      console.log(response.data);
       return response.data;
     }
 
-    console.log(history.location.pathname);
     if (history.location.pathname === "/profile/edit") {
       setNewUser(false);
       setUser(ref.current);
-      // console.log(Object.entries(ref.current));
       for (const [key, value] of Object.entries(ref.current)) {
-        console.log(`${key}: ${value}`);
         setValue(key, value);
       }
     } else if (history.location.pathname !== "/profile") {
@@ -153,19 +152,16 @@ const UserForm = () => {
     }
   }, [history, setValue, id]);
 
-  console.log(history.location.pathname);
   // if (
   //   !(user && Object.keys(user).length === 0 && user.constructor === Object)
   // ) {
   //   //object isn't empty
-  //   console.log("hi user");
   // }
 
   // upload to imgur currently the server not working
   // const handleImageUpload = (event) => {
   //   const formdata = new FormData();
   //   formdata.append("image", event.target.files[0]);
-  //   console.log(event.target.files);
   //   fetch("https://api.imgur.com/3/image/", {
   //     method: "post",
   //     headers: {
@@ -174,7 +170,6 @@ const UserForm = () => {
   //     body: formdata,
   //   })
   //     .then((data) => data.json())
-  //     .then((data) => console.log(data));
   // };
 
   const handlePreviousPage = () => {
@@ -182,9 +177,11 @@ const UserForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000);
     if (newUser) {
-      console.log("bbbbbbbbbbb", user, data);
       if (data.password === data.confirmPassword) {
         const response = await SendRequest(
           "http://localhost:4000/api/new/user",
@@ -193,7 +190,6 @@ const UserForm = () => {
         );
       }
     } else {
-      console.log("aaaaaaaaaaaaa", user, data);
       if (user.password === data.oldPassword) {
         data["password"] = data.newPassword;
         data["email"] = user.email;
@@ -545,6 +541,7 @@ const UserForm = () => {
         </tbody>
       </FormTable>
       {!newUser && <SaveButton type="submit" value="save" />}
+      <Toast show={showToast} text="successfully finished" />
     </form>
   );
 };

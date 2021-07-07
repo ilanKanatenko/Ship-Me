@@ -6,10 +6,13 @@ import img_avtr from "../../images/img_avtr.png";
 import axios from "axios";
 import { useCallback } from "react";
 import { NavLink } from "react-router-dom";
-import { FaEllipsisH } from "react-icons/fa";
+import { FaEllipsisH, FaSearch } from "react-icons/fa";
 import { useEffect } from "react";
 import { useState } from "react";
 import { SendRequest } from "../shared/SendRequest";
+import SearchInput from "../shared/SearchInput";
+import Toast from "../shared/Toast";
+// import ReactCSSTransitionGroup from 'react-transition-group';
 
 const InputSubmit = styled.input`
   display: inline-block;
@@ -141,6 +144,22 @@ const DropDownLink = styled(NavLink)`
     background-color: #6b8499;
   }
 `;
+const DeleteButton = styled.button`
+  color: black;
+  float: ${(props) => (props.float ? props.float : "left")};
+  text-decoration: none;
+  text-align: left;
+  float: none;
+  display: block;
+  padding: 14px 16px;
+  height: 50px;
+  box-sizing: border-box;
+  width: 100%;
+  border: unset;
+  :hover {
+    background-color: #6b8499;
+  }
+`;
 
 const AvtrImg = styled.img`
   vertical-align: middle;
@@ -153,9 +172,17 @@ const AvtrImg = styled.img`
   margin-right: 10px;
 `;
 
+const StyledSearchInput = styled(SearchInput)`
+  height: 34px;
+`;
+
 const Account = () => {
   const [showDropDown, setShowDropDown] = useState("");
   const [users, setUsers] = useState([{}]);
+  const [allUsers, setAllUsers] = useState([{}]);
+  const [searchInput, setSearchInput] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
   useEffect(() => {
     async function getAllCompanies() {
       const response = await SendRequest(
@@ -163,6 +190,7 @@ const Account = () => {
         "get"
       );
       setUsers(Object.values(response.data));
+      setAllUsers(Object.values(response.data));
     }
     getAllCompanies();
   }, []);
@@ -170,18 +198,15 @@ const Account = () => {
   const handleProfileClick = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    console.log(event.target);
     if (event.target.getAttribute("value") === showDropDown) {
       setShowDropDown((prevValues) => {
         return event.target.getAttribute("");
       });
-      console.log("1");
       document.removeEventListener("click", memorizeClosing);
     } else {
       setShowDropDown((prevValues) => {
         return event.target.getAttribute("value");
       });
-      console.log("2");
       document.addEventListener("click", memorizeClosing);
     }
   };
@@ -190,8 +215,6 @@ const Account = () => {
   }, []);
 
   const handleClosingProfile = (event) => {
-    console.log("3");
-
     if (event.target.getAttribute("actionclick")) {
       return;
     }
@@ -199,11 +222,22 @@ const Account = () => {
     //   console.log("bbbbb");
     //   return;
     // }
-    console.log("4");
     setShowDropDown(event.target.getAttribute("value"));
     document.removeEventListener("click", memorizeClosing);
   };
-  console.log(users);
+
+  const handleSearch = (e) => {
+    setSearchInput(e.target.value);
+    console.log(users);
+    console.log(e.target.value);
+    console.log(allUsers);
+    let filteredUsers = allUsers.filter((user) =>
+      user.firstName.toLowerCase().includes(e.target.value.toLowerCase())
+    );
+
+    setUsers([...filteredUsers]);
+    // setUsers()
+  };
 
   async function handleDeleteUser(event) {
     event.stopPropagation();
@@ -212,10 +246,13 @@ const Account = () => {
       `http://localhost:4000/api/user/${id}`,
       "delete"
     );
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000);
     const updatedUsers = users.filter((user) => user._id !== id);
-    console.log("aaaaaaaaaaaaaaaaa", updatedUsers);
-    console.log(users, "bbbbbbbbbbbbbbbbbb");
     setUsers([...updatedUsers]);
+    setAllUsers([...updatedUsers]);
 
     setShowDropDown("");
   }
@@ -236,7 +273,10 @@ const Account = () => {
             </tr>
             <tr>
               <Td>
-                <input defaultValue="search" />
+                <StyledSearchInput
+                  value={searchInput}
+                  onChange={handleSearch}
+                />
               </Td>
               <Td>
                 <NavLink to="/profile">
@@ -280,13 +320,12 @@ const Account = () => {
                                 </DropDownLink>
 
                                 <hr></hr>
-                                <DropDownLink
+                                <DeleteButton
                                   value={user._id}
                                   onClick={(e) => handleDeleteUser(e)}
-                                  to={`#`}
                                 >
                                   Delete
-                                </DropDownLink>
+                                </DeleteButton>
                               </DropDownContent>
                             </DropDownDiv>
                           </Td>
@@ -305,6 +344,7 @@ const Account = () => {
           </tbody>
         </Table>
       </RightDiv>
+      <Toast show={showToast} text="deleted successfully" />
     </>
   );
 };

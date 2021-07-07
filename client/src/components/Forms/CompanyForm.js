@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
 import { SendRequest } from "../shared/SendRequest";
+import Toast from "../shared/Toast";
 
 const PError = styled.p`
   margin: 0px;
@@ -123,7 +124,7 @@ const CompanyForm = (props) => {
   const { id } = useParams();
 
   const [newCompany, setNewCompany] = useState(true);
-
+  const [showToast, setShowToast] = useState(false);
   const {
     register,
     setValue,
@@ -132,30 +133,23 @@ const CompanyForm = (props) => {
   } = useForm();
 
   useEffect(() => {
-    console.log(history);
-
     async function getCompanyById() {
       const response = await SendRequest(
         `http://localhost:4000/api/company/${id}`,
         "get"
       );
-      console.log("yyyyyyyyyyyyyyyyyyy", response.data);
 
       setCompanyData({ ...response.data });
-      console.log(response.data);
       return response.data;
     }
 
     if (history.location.pathname === "/company/edit") {
       setNewCompany(false);
       setCompanyData(ref.current);
-      // console.log(Object.entries(ref.current));
       for (const [key, value] of Object.entries(ref.current)) {
-        console.log(`${key}: ${value}`);
         setValue(key, value);
       }
     } else if (history.location.pathname !== "/company") {
-      console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
       setNewCompany(false);
       ref.current = getCompanyById();
     }
@@ -169,17 +163,18 @@ const CompanyForm = (props) => {
   // }
 
   const onSubmit = async (data) => {
-    console.log("ccccccccccc", data);
     // if (data["confirmPassword"] === data["password"]) {
     //   const response = await axios.put(
     //     "http://localhost:4000/api/company",
     //     data
     //   );
-    // console.log(response);
 
+    setShowToast(true);
+    setTimeout(() => {
+      setShowToast(false);
+    }, 2000);
     //## uncheck for data fetching
     if (newCompany) {
-      // console.log("bbbbbbbbbbb", companyData, data);
       const response = await SendRequest(
         "http://localhost:4000/api/company",
         "post",
@@ -208,7 +203,6 @@ const CompanyForm = (props) => {
     //   dispatch(authActions.update(response.data));
     //   // history.push("/");
     // } else {
-    //   console.log("the passwords aren't equal");
     // }
   };
 
@@ -225,7 +219,6 @@ const CompanyForm = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", companyData)}
       <FormTable>
         <tbody>
           {/* <NameDiv> */}
@@ -407,6 +400,7 @@ const CompanyForm = (props) => {
         </tbody>
       </FormTable>
       {!newCompany && <SaveButton type="submit" value="save" />}
+      <Toast show={showToast} text="successfully finished" />
     </form>
   );
 };

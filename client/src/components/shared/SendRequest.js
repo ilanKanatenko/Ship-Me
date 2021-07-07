@@ -7,14 +7,12 @@ export const SendRequest = async (url, method, data = {}) => {
   const token = localStorage.getItem("token");
   // if (data) {
   data.token = token;
-  console.log(url, method, data);
   // }
   let response;
   switch (method) {
     case "get":
       // if (data) {
       //   response = await axios.get(url, { params: { ...data } });
-      //   console.log("a SendRequest  get", response);
       //   if (response.status === 401) {
       //     return;
       //   }

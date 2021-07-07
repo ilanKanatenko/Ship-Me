@@ -65,7 +65,6 @@ const SignIn = () => {
       "get",
       data
     );
-    console.log("aaaaaaaaaaaaaaaa", response);
     const { company } = response.data;
 
     if (response.status === 200) {
@@ -80,7 +79,6 @@ const SignIn = () => {
         history.push("/");
       }
     } else {
-      console.log("email or password are incorrect ");
     }
   };
 

@@ -61,8 +61,6 @@ const Home = () => {
   // };
   // res = fetchImage();
   const user = useSelector((state) => state.auth.user);
-  console.log("zzzzz", user);
-  console.log(user["confirmPassword"]);
   return (
     <>
       <VerticalLine />

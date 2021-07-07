@@ -77,20 +77,17 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = async (data) => {
-    console.log(data);
     if (data["confirmPassword"] === data["password"]) {
       const response = await SendRequest(
         "http://localhost:4000/api/user",
         "post",
         data
       );
-      console.log("whats the response aaaaaa", response);
       if (response.status === 200) {
         dispatch(authActions.login(response.data));
         history.push("/");
       }
     } else {
-      console.log("the passwords aren't equal");
     }
   };
 

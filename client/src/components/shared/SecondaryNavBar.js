@@ -47,7 +47,6 @@ const StyledNavLink = styled(NavLink)`
 
 const MainNavBar = () => {
   // const handleProfileClick = (event) => {
-  //   console.log(event.target);
   // };
   // const showNavBar = useSelector((state) => state.ui.showSecondaryNav);
 

@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialAuthState = {
   user: {},
   company: {},
-  token: "",
-  isAuthenticated: false,
+  token: false,
+  isAuthenticated: localStorage.getItem("token") ? true : false,
 };
 
 const authSlice = createSlice({
@@ -28,7 +28,8 @@ const authSlice = createSlice({
     logout(state) {
       state.user = {};
       state.company = {};
-      state.token = "";
+      state.token = false;
+      localStorage.setItem("token", "");
       state.isAuthenticated = false;
     },
   },

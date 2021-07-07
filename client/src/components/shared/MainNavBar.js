@@ -7,6 +7,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { uiActions } from "../../store/ui";
+import { authActions } from "../../store/auth";
 
 // const LiLeft = styled.li`
 //   float: left;
@@ -112,14 +113,12 @@ const MainNavBar = () => {
   };
 
   const handleClosingProfile = (event) => {
-    console.log(event);
     if (
       event.target.attributes.value &&
       event.target.attributes.value.value === "image"
     ) {
       return;
     }
-    console.log(showDropDown);
     setShowDropDown(false);
     document.removeEventListener("click", handleClosingProfile);
   };
@@ -197,7 +196,14 @@ const MainNavBar = () => {
             </DropDownLink>
             <hr></hr>
             {/* #TODO logout page clear state and redirect to home page */}
-            <DropDownLink to="/">Logout</DropDownLink>
+            <DropDownLink
+              onClick={() => {
+                dispatch(authActions.logout());
+              }}
+              to="#"
+            >
+              Logout
+            </DropDownLink>
           </DropDownContent>
         </DropDownDiv>
         <StyledNavLink float="right" color="black" exact to="/aaaa">
