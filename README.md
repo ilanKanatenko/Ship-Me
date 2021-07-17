@@ -1,7 +1,7 @@
 # Ship-Me!
 
-project that was built using react and node. give a platform  for companies to add users and monitor shipments
-and order, And in the future order tracking 
+project that was built using react , mongoDB and node. give a platform  for companies to add users and monitor shipments
+and orders, And in the future order tracking 
 
 
 # Files
