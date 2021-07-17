@@ -1,7 +1,9 @@
 # Ship-Me!
 
 project that was built using react , mongoDB and node. give a platform  for companies to add users and monitor shipments
-and orders, And in the future order tracking 
+and orders.
+
+used styled-components for the css with out third party components
 
 
 # Files
